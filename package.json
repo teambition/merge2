@@ -1,0 +1,39 @@
+{
+  "name": "gulp-merge",
+  "description": "Merge multiple streams into one stream in order.",
+  "authors": [
+    "Yan Qing <admin@zensh.com>"
+  ],
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:teambition/gulp-merge.git"
+  },
+  "homepage": "https://github.com/teambition/gulp-merge",
+  "keywords": [
+    "gulpplugin",
+    "multiple",
+    "merge",
+    "stream",
+    "merge stream",
+    "sync"
+  ],
+  "dependencies": {
+    "through2": "~1.1.1"
+  },
+  "devDependencies": {
+    "gulp": ">=3.8.8",
+    "gulp-jshint": ">=1.8.5",
+    "gulp-sequence": ">=0.1.0"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "test",
+    "gulpfile.js"
+  ]
+}
