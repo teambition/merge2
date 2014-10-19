@@ -1,26 +1,28 @@
 {
-  "name": "gulp-merge",
-  "description": "Merge multiple streams into one stream in order.",
+  "name": "merge2",
+  "description": "Merge multiple streams into one stream in sequence or parallel.",
   "authors": [
     "Yan Qing <admin@zensh.com>"
   ],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:teambition/gulp-merge.git"
+    "url": "git@github.com:teambition/merge2.git"
   },
-  "homepage": "https://github.com/teambition/gulp-merge",
+  "homepage": "https://github.com/teambition/merge2",
   "keywords": [
-    "gulpplugin",
+    "merge2",
     "multiple",
+    "sequence",
+    "parallel",
     "merge",
     "stream",
     "merge stream",
     "sync"
   ],
   "dependencies": {
-    "through2": "~1.1.1"
+    "through2": "^1.1.1"
   },
   "devDependencies": {
     "gulp": ">=3.8.8",

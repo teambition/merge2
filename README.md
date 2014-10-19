@@ -1,6 +1,6 @@
-gulp-merge v0.1.0 [![Build Status](https://travis-ci.org/teambition/gulp-merge.svg)](https://travis-ci.org/teambition/gulp-merge)
+merge2 v0.2.0 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
 ====
-> Merge multiple streams into one stream in order.
+> Merge multiple streams into one stream in sequence or parallel.
 
 ## Install
 
@@ -15,13 +15,13 @@ npm install --save-dev gulp-sequence
 
 ```js
 var gulp = require('gulp'),
-  gulpMerge = require('gulp-merge'),
+  merge2 = require('merge2'),
   concat = require('gulp-concat'),
   minifyHtml = require('gulp-minify-html'),
   ngtemplate = require('gulp-ngtemplate');
 
 gulp.task('app-js', function () {
-  return gulpMerge(
+  return merge2(
       gulp.src('static/src/tpl/*.html')
         .pipe(minifyHtml({empty: true}))
         .pipe(ngtemplate({
@@ -47,14 +47,19 @@ gulp.task('app-js', function () {
 ## API
 
 ```js
-var gulpMerge = require('gulp-merge');
+var merge2 = require('merge2');
 ```
 
-### gulpMerge(stream1, stream2)
+### merge2()
+### merge2(options)
+### merge2(stream1, stream2, ..., streamN)
+### merge2(stream1, stream2, ..., streamN, options)
+### merge2(stream1, [stream2, stream3, ...], streamN, options)
 return a duplex stream (outStream).
 
-### outStream.add(stream1, stream2)
-return outStream(duplex stream).
+### outStream.add(stream)
+### outStream.add(stream1, [stream2, stream3, ...], ...)
+return the outStream.
 
 ## License
 

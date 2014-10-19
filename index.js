@@ -1,7 +1,7 @@
 'use strict';
 /*
- * gulp-merge
- * https://github.com/teambition/gulp-merge
+ * merge2
+ * https://github.com/teambition/merge2
  *
  * Copyright (c) 2014 Yan Qing
  * Licensed under the MIT license.
@@ -10,17 +10,23 @@
 var through = require('through2');
 var slice = Array.prototype.slice;
 
+function isNotStream(stream) {
+  return !stream || typeof stream.addListener !== 'function';
+}
+
 module.exports = function () {
-  var streams = [];
+  var streamsQueue = [];
   var merging = false;
   var outStream  = through.obj();
 
-  function addStream(stream) {
-    if (Array.isArray(stream)) {
-      stream.forEach(addStream);
-      return this;
-    }
-    streams.push(stream);
+  var args = slice.call(arguments);
+  var options = args[args.length - 1];
+
+  if (isNotStream(options)) args.pop();
+  options = options || {};
+
+  function addStream() {
+    streamsQueue.push.apply(streamsQueue, arguments);
     mergeStream();
     return this;
   }
@@ -28,29 +34,46 @@ module.exports = function () {
   function mergeStream () {
     if (merging) return;
     merging = true;
-    var stream = streams.shift();
-    if (!stream) return endStream();
 
-    stream.once('end', function () {
+    var streams = streamsQueue.shift();
+    if (!streams) return endStream();
+    if (!Array.isArray(streams)) streams = [streams];
+
+    var pipesCount = streams.length + 1;
+
+    function next() {
+      if (--pipesCount > 0) return;
       merging = false;
       mergeStream();
-    });
-    stream.pipe(outStream, {end: false});
+    }
+
+    function pipe(stream) {
+      function onend() {
+        stream.removeListener('merge2UnpipeEnd', onend);
+        stream.removeListener('end', onend);
+        next();
+      }
+      stream.on('merge2UnpipeEnd', onend);
+      stream.on('end', onend);
+      stream.pipe(outStream, {end: false});
+    }
+
+    for (var i = 0; i < streams.length; i++) pipe(streams[i]);
+
+    next();
   }
 
-  function endStream () {
+  function endStream() {
     merging = false;
-    if (outStream.readable) outStream.emit('end');
+    if (options.end !== false) outStream.end();
   }
 
   outStream.setMaxListeners(0);
   outStream.add = addStream;
   outStream.on('unpipe', function (stream) {
-    var index = streams.indexOf(stream);
-    if (index >= 0) streams.splice(index, 1);
-    if (!streams.length) endStream();
+    stream.emit('merge2UnpipeEnd');
   });
 
-  addStream(slice.call(arguments));
+  addStream.apply(null, args);
   return outStream;
 };
