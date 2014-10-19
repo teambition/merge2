@@ -60,13 +60,13 @@ stream.add(stream3);
 ```
 
 ```js
-// merge oder:
+// merge order:
 //   1. merge `stream1`;
 //   2. merge `stream2` and `stream3` in parallel after `stream1` merged;
 //   3. merge 'stream4' after `stream2` and `stream3` merged;
 var stream = merge2(stream1, [stream2, stream3], stream4);
 
-// merge oder:
+// merge order:
 //   1. merge `stream5` and `stream6` in parallel after `stream4` merged;
 //   2. merge 'stream7' after `stream5` and `stream6` merged;
 stream.add([stream5, stream6], stream7);
@@ -101,18 +101,20 @@ return the outStream.
 #### stream
 
 *option*
+
 Type: `Readable` or `Duplex` or `Transform` stream.
 
 #### options
 
 *option*
+
 Type: `Object`.
 
 * **end** - `Boolean` - if `end === false` then outStream will not be auto ended, you should end by yourself. **Default:** `undefined`
 
 * **objectMode** - `Boolean` . **Default:** `true`
 
-`objectMode` and other options is same as Node.js `Stream`.
+`objectMode` and other options(`highWaterMark`, `defaultEncoding` ...) is same as Node.js `Stream`.
 
 ## License
 
