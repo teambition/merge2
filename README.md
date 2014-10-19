@@ -1,13 +1,13 @@
-merge2 v0.2.0 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
+merge2 v0.2.1 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
 ====
 > Merge multiple streams into one stream in sequence or parallel.
 
 ## Install
 
-Install with [npm](https://npmjs.org/package/gulp-merge)
+Install with [npm](https://npmjs.org/package/merge2)
 
 ```
-npm install --save-dev gulp-sequence
+npm install merge2
 ```
 
 

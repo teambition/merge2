@@ -17,13 +17,15 @@ function isNotStream(stream) {
 module.exports = function () {
   var streamsQueue = [];
   var merging = false;
-  var outStream  = through.obj();
-
   var args = slice.call(arguments);
   var options = args[args.length - 1];
 
   if (isNotStream(options)) args.pop();
-  options = options || {};
+  else options = {};
+
+  var doEnd = options.end !== false;
+  var outStream  = through.obj(options);
+
 
   function addStream() {
     streamsQueue.push.apply(streamsQueue, arguments);
@@ -31,7 +33,7 @@ module.exports = function () {
     return this;
   }
 
-  function mergeStream () {
+  function mergeStream() {
     if (merging) return;
     merging = true;
 
@@ -65,7 +67,7 @@ module.exports = function () {
 
   function endStream() {
     merging = false;
-    if (options.end !== false) outStream.end();
+    return doEnd && outStream.end();
   }
 
   outStream.setMaxListeners(0);
@@ -74,6 +76,6 @@ module.exports = function () {
     stream.emit('merge2UnpipeEnd');
   });
 
-  addStream.apply(null, args);
+  if (args.length) addStream.apply(null, args);
   return outStream;
 };
