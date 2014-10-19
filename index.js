@@ -22,7 +22,7 @@ module.exports = function () {
   var doEnd = options.end !== false;
   if (options.objectMode == null) options.objectMode = true;
   if (options.highWaterMark == null) options.highWaterMark = 16;
-  var outStream  = through(options);
+  var mergedStream  = through(options);
 
 
   function addStream() {
@@ -55,7 +55,7 @@ module.exports = function () {
       }
       stream.on('merge2UnpipeEnd', onend);
       stream.on('end', onend);
-      stream.pipe(outStream, {end: false});
+      stream.pipe(mergedStream, {end: false});
     }
 
     for (var i = 0; i < streams.length; i++) pipe(streams[i]);
@@ -65,15 +65,15 @@ module.exports = function () {
 
   function endStream() {
     merging = false;
-    return doEnd && outStream.end();
+    return doEnd && mergedStream.end();
   }
 
-  outStream.setMaxListeners(0);
-  outStream.add = addStream;
-  outStream.on('unpipe', function (stream) {
+  mergedStream.setMaxListeners(0);
+  mergedStream.add = addStream;
+  mergedStream.on('unpipe', function (stream) {
     stream.emit('merge2UnpipeEnd');
   });
 
   if (args.length) addStream.apply(null, args);
-  return outStream;
+  return mergedStream;
 };

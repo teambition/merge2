@@ -92,11 +92,11 @@ var merge2 = require('merge2');
 ### merge2(stream1, stream2, ..., streamN)
 ### merge2(stream1, stream2, ..., streamN, options)
 ### merge2(stream1, [stream2, stream3, ...], streamN, options)
-return a duplex stream (outStream). streams in array will be merged in parallel.
+return a duplex stream (mergedStream). streams in array will be merged in parallel.
 
-### outStream.add(stream)
-### outStream.add(stream1, [stream2, stream3, ...], ...)
-return the outStream.
+### mergedStream.add(stream)
+### mergedStream.add(stream1, [stream2, stream3, ...], ...)
+return the mergedStream.
 
 #### stream
 
@@ -110,7 +110,7 @@ Type: `Readable` or `Duplex` or `Transform` stream.
 
 Type: `Object`.
 
-* **end** - `Boolean` - if `end === false` then outStream will not be auto ended, you should end by yourself. **Default:** `undefined`
+* **end** - `Boolean` - if `end === false` then mergedStream will not be auto ended, you should end by yourself. **Default:** `undefined`
 
 * **objectMode** - `Boolean` . **Default:** `true`
 
