@@ -10,21 +10,19 @@
 var through = require('through2');
 var slice = Array.prototype.slice;
 
-function isNotStream(stream) {
-  return !stream || typeof stream.addListener !== 'function';
-}
-
 module.exports = function () {
   var streamsQueue = [];
   var merging = false;
   var args = slice.call(arguments);
   var options = args[args.length - 1];
 
-  if (isNotStream(options)) args.pop();
+  if (options && !Array.isArray(options) && typeof options.addListener !== 'function') args.pop();
   else options = {};
 
   var doEnd = options.end !== false;
-  var outStream  = through.obj(options);
+  if (options.objectMode == null) options.objectMode = true;
+  if (options.highWaterMark == null) options.highWaterMark = 16;
+  var outStream  = through(options);
 
 
   function addStream() {

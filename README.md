@@ -1,4 +1,4 @@
-merge2 v0.2.1 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
+merge2 v0.3.0 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
 ====
 > Merge multiple streams into one stream in sequence or parallel.
 
@@ -44,6 +44,43 @@ gulp.task('app-js', function () {
 });
 ```
 
+```js
+var stream = merge2([stream1, stream2], stream3, {end: false})
+//...
+stream.add(stream4, stream5);
+//..
+stream.end();
+```
+
+```js
+// equal to merge2([stream1, stream2], stream3)
+var stream = merge2();
+stream.add([stream1, stream2]);
+stream.add(stream3);
+```
+
+```js
+// merge oder:
+//   1. merge `stream1`;
+//   2. merge `stream2` and `stream3` in parallel after `stream1` merged;
+//   3. merge 'stream4' after `stream2` and `stream3` merged;
+var stream = merge2(stream1, [stream2, stream3], stream4);
+
+// merge oder:
+//   1. merge `stream5` and `stream6` in parallel after `stream4` merged;
+//   2. merge 'stream7' after `stream5` and `stream6` merged;
+stream.add([stream5, stream6], stream7);
+```
+
+```js
+// nest merge
+// equal to merge2(stream1, stream2, stream6, stream3, [stream4, stream5]);
+var streamA = merge2(stream1, stream2);
+var streamB = merge2(stream3, [stream4, stream5]);
+var stream = merge2(streamA, streamB);
+streamA.add(stream6);
+```
+
 ## API
 
 ```js
@@ -55,11 +92,27 @@ var merge2 = require('merge2');
 ### merge2(stream1, stream2, ..., streamN)
 ### merge2(stream1, stream2, ..., streamN, options)
 ### merge2(stream1, [stream2, stream3, ...], streamN, options)
-return a duplex stream (outStream).
+return a duplex stream (outStream). streams in array will be merged in parallel.
 
 ### outStream.add(stream)
 ### outStream.add(stream1, [stream2, stream3, ...], ...)
 return the outStream.
+
+#### stream
+
+*option*
+Type: `Readable` or `Duplex` or `Transform` stream.
+
+#### options
+
+*option*
+Type: `Object`.
+
+* **end** - `Boolean` - if `end === false` then outStream will not be auto ended, you should end by yourself. **Default:** `undefined`
+
+* **objectMode** - `Boolean` . **Default:** `true`
+
+`objectMode` and other options is same as Node.js `Stream`.
 
 ## License
 

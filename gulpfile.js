@@ -1,10 +1,9 @@
 'use strict';
 
 var gulp = require('gulp'),
-  jshint = require('gulp-jshint'),
   gulpSequence = require('gulp-sequence'),
-  gulpMerge = require('./index'),
-  test = require('./test/index');
+  jshint = require('gulp-jshint'),
+  mocha = require('gulp-mocha');
 
 gulp.task('jshint', function () {
   return gulp.src(['*.js', 'test/*.js'])
@@ -12,6 +11,11 @@ gulp.task('jshint', function () {
     .pipe(jshint.reporter('default'));
 });
 
-test();
+gulp.task('mocha', function () {
+  return gulp.src('test/*.js', {read: false})
+    .pipe(mocha());
+});
 
-gulp.task('default', gulpSequence('jshint', 'test'));
+gulp.task('default', ['test']);
+
+gulp.task('test', gulpSequence('jshint', 'mocha'));
