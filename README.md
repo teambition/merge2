@@ -1,4 +1,4 @@
-merge2 v0.3.0 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
+merge2 v0.3.1 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
 ====
 > Merge multiple streams into one stream in sequence or parallel.
 
