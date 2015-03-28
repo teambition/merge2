@@ -133,7 +133,7 @@ describe('merge2', function () {
 
   it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
     var options = {objectMode: false};
-    var result = [];
+    var result = '';
     var read1 = fakeReadStream(options);
     var read2 = fakeReadStream(options);
     var through3 = through(options);
@@ -158,11 +158,11 @@ describe('merge2', function () {
 
     mergeStream
       .on('data', function (chunk) {
-        result.push(chunk.toString());
+        result += chunk.toString();
       })
       .on('error', done)
       .on('end', function () {
-        should(result).be.eql(['1', '2', '3', '4', '5', '6']);
+        should(result).be.equal('123456');
         done();
       });
   });

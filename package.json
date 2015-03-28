@@ -21,9 +21,10 @@
     "merge stream",
     "sync"
   ],
-  "dependencies": {
-    "through2": "^1.1.1"
+  "engines": {
+    "node": ">=0.10.36"
   },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-jshint": "^1.9.4",
@@ -31,6 +32,7 @@
     "gulp-sequence": "^0.3.2",
     "mocha": "^2.2.1",
     "should": "^5.2.0",
+    "through2": "^1.1.1",
     "thunks": "^2.7.2"
   },
   "scripts": {

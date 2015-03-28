@@ -98,6 +98,9 @@ return a duplex stream (mergedStream). streams in array will be merged in parall
 ### mergedStream.add(stream1, [stream2, stream3, ...], ...)
 return the mergedStream.
 
+### mergedStream.on('queueDrain', function() {})
+It will emit 'queueDrain' when all streams merged. If you set `end === false` in options, this event give you a notice that should add more streams to merge or end the mergedStream.
+
 #### stream
 
 *option*

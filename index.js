@@ -7,7 +7,7 @@
  * Licensed under the MIT license.
  */
 
-var through = require('through2');
+var PassThrough = require('stream').PassThrough;
 var slice = Array.prototype.slice;
 
 module.exports = function merge2() {
@@ -22,8 +22,7 @@ module.exports = function merge2() {
   var doEnd = options.end !== false;
   if (options.objectMode == null) options.objectMode = true;
   if (options.highWaterMark == null) options.highWaterMark = 16;
-  var mergedStream  = through(options);
-
+  var mergedStream  = PassThrough(options);
 
   function addStream() {
     for (var i = 0, len = arguments.length; i < len; i++)
@@ -59,6 +58,8 @@ module.exports = function merge2() {
       stream.on('merge2UnpipeEnd', onend);
       stream.on('end', onend);
       stream.pipe(mergedStream, {end: false});
+      // compatible for old stream
+      stream.resume();
     }
 
     for (var i = 0; i < streams.length; i++) pipe(streams[i]);
@@ -68,6 +69,8 @@ module.exports = function merge2() {
 
   function endStream() {
     merging = false;
+    // emit 'queueDrain' when all streams merged.
+    mergedStream.emit('queueDrain');
     return doEnd && mergedStream.end();
   }
 
@@ -86,8 +89,9 @@ function pauseStreams(streams) {
   if (!Array.isArray(streams)) {
     if (typeof streams.pipe !== 'function' || typeof streams.pause !== 'function')
       throw new Error('Only readable stream can be merged.');
-    return streams.pause();
+    streams.pause();
+  } else {
+    for (var i = 0, len = streams.length; i < len; i++) pauseStreams(streams[i]);
   }
-  for (var i = 0, len = streams.length; i < len; i++) pauseStreams(streams[i]);
   return streams;
 }
