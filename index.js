@@ -10,7 +10,7 @@
 var through = require('through2');
 var slice = Array.prototype.slice;
 
-module.exports = function () {
+module.exports = function merge2() {
   var streamsQueue = [];
   var merging = false;
   var args = slice.call(arguments);
@@ -26,7 +26,8 @@ module.exports = function () {
 
 
   function addStream() {
-    streamsQueue.push.apply(streamsQueue, arguments);
+    for (var i = 0, len = arguments.length; i < len; i++)
+      streamsQueue.push(pauseStreams(arguments[i]));
     mergeStream();
     return this;
   }
@@ -53,6 +54,8 @@ module.exports = function () {
         stream.removeListener('end', onend);
         next();
       }
+      // skip ended stream
+      if (stream._readableState.endEmitted) return next();
       stream.on('merge2UnpipeEnd', onend);
       stream.on('end', onend);
       stream.pipe(mergedStream, {end: false});
@@ -77,3 +80,14 @@ module.exports = function () {
   if (args.length) addStream.apply(null, args);
   return mergedStream;
 };
+
+// check and pause streams for pipe.
+function pauseStreams(streams) {
+  if (!Array.isArray(streams)) {
+    if (typeof streams.pipe !== 'function' || typeof streams.pause !== 'function')
+      throw new Error('Only readable stream can be merged.');
+    return streams.pause();
+  }
+  for (var i = 0, len = streams.length; i < len; i++) pauseStreams(streams[i]);
+  return streams;
+}
