@@ -16,7 +16,7 @@ module.exports = function merge2() {
   var args = slice.call(arguments);
   var options = args[args.length - 1];
 
-  if (options && !Array.isArray(options) && typeof options.addListener !== 'function') args.pop();
+  if (options && !Array.isArray(options) && options.pipe == null) args.pop();
   else options = {};
 
   var doEnd = options.end !== false;
@@ -55,6 +55,7 @@ module.exports = function merge2() {
       }
       // skip ended stream
       if (stream._readableState.endEmitted) return next();
+
       stream.on('merge2UnpipeEnd', onend);
       stream.on('end', onend);
       stream.pipe(mergedStream, {end: false});
@@ -76,7 +77,7 @@ module.exports = function merge2() {
 
   mergedStream.setMaxListeners(0);
   mergedStream.add = addStream;
-  mergedStream.on('unpipe', function (stream) {
+  mergedStream.on('unpipe', function(stream) {
     stream.emit('merge2UnpipeEnd');
   });
 
@@ -87,7 +88,7 @@ module.exports = function merge2() {
 // check and pause streams for pipe.
 function pauseStreams(streams) {
   if (!Array.isArray(streams)) {
-    if (typeof streams.pipe !== 'function' || typeof streams.pause !== 'function')
+    if (!streams._readableState || !streams.pause || !streams.pipe)
       throw new Error('Only readable stream can be merged.');
     streams.pause();
   } else {

@@ -1,6 +1,9 @@
-merge2 v0.3.1 [![Build Status](https://travis-ci.org/teambition/merge2.svg)](https://travis-ci.org/teambition/merge2)
+merge2
 ====
 > Merge multiple streams into one stream in sequence or parallel.
+
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
 
 ## Install
 
@@ -122,3 +125,9 @@ Type: `Object`.
 ## License
 
 MIT © [Teambition](http://teambition.com)
+
+[npm-url]: https://npmjs.org/package/merge2
+[npm-image]: http://img.shields.io/npm/v/merge2.svg
+
+[travis-url]: https://travis-ci.org/teambition/merge2
+[travis-image]: http://img.shields.io/travis/teambition/merge2.svg
