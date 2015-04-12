@@ -6,8 +6,8 @@
  * Copyright (c) 2014 Yan Qing
  * Licensed under the MIT license.
  */
-
-var PassThrough = require('stream').PassThrough;
+var Stream = require('stream');
+var PassThrough = Stream.PassThrough;
 var slice = Array.prototype.slice;
 
 module.exports = function merge2() {
@@ -26,7 +26,7 @@ module.exports = function merge2() {
 
   function addStream() {
     for (var i = 0, len = arguments.length; i < len; i++)
-      streamsQueue.push(pauseStreams(arguments[i]));
+      streamsQueue.push(pauseStreams(arguments[i], options));
     mergeStream();
     return this;
   }
@@ -86,8 +86,11 @@ module.exports = function merge2() {
 };
 
 // check and pause streams for pipe.
-function pauseStreams(streams) {
+function pauseStreams(streams, options) {
   if (!Array.isArray(streams)) {
+    // Backwards-compat with old-style streams
+    if (!streams._readableState && streams.pipe) streams = streams.pipe(PassThrough(options));
+
     if (!streams._readableState || !streams.pause || !streams.pipe)
       throw new Error('Only readable stream can be merged.');
     streams.pause();
