@@ -95,7 +95,7 @@ function pauseStreams(streams, options) {
       throw new Error('Only readable stream can be merged.');
     streams.pause();
   } else {
-    for (var i = 0, len = streams.length; i < len; i++) pauseStreams(streams[i]);
+    for (var i = 0, len = streams.length; i < len; i++) streams[i] = pauseStreams(streams[i]);
   }
   return streams;
 }
