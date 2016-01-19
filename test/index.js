@@ -253,5 +253,4 @@ describe('merge2', function () {
         done()
       })
   })
-
 })
