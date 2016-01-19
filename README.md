@@ -4,6 +4,7 @@ merge2
 
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
+[![Downloads][downloads-image]][downloads-url]
 
 ## Install
 
@@ -124,10 +125,13 @@ Type: `Object`.
 
 ## License
 
-MIT © [Teambition](http://teambition.com)
+MIT © [Teambition](https://www.teambition.com)
 
 [npm-url]: https://npmjs.org/package/merge2
 [npm-image]: http://img.shields.io/npm/v/merge2.svg
 
 [travis-url]: https://travis-ci.org/teambition/merge2
 [travis-image]: http://img.shields.io/travis/teambition/merge2.svg
+
+[downloads-url]: https://npmjs.org/package/merge2
+[downloads-image]: http://img.shields.io/npm/dm/merge2.svg?style=flat-square

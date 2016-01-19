@@ -3,7 +3,7 @@
  * merge2
  * https://github.com/teambition/merge2
  *
- * Copyright (c) 2014 Yan Qing
+ * Copyright (c) 2014-2016 Teambition
  * Licensed under the MIT license.
  */
 var Stream = require('stream')
@@ -51,6 +51,7 @@ module.exports = function merge2 () {
     function pipe (stream) {
       function onend () {
         stream.removeListener('merge2UnpipeEnd', onend)
+        stream.removeListener('finish', onend)
         stream.removeListener('end', onend)
         next()
       }
@@ -58,6 +59,7 @@ module.exports = function merge2 () {
       if (stream._readableState.endEmitted) return next()
 
       stream.on('merge2UnpipeEnd', onend)
+      stream.on('finish', onend)
       stream.on('end', onend)
       stream.pipe(mergedStream, {end: false})
       // compatible for old stream
