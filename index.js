@@ -21,7 +21,7 @@ module.exports = function merge2 () {
 
   var doEnd = options.end !== false
   if (options.objectMode == null) options.objectMode = true
-  if (options.highWaterMark == null) options.highWaterMark = 16
+  if (options.highWaterMark == null) options.highWaterMark = 64 * 1024
   var mergedStream = PassThrough(options)
 
   function addStream () {
