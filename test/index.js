@@ -1,11 +1,11 @@
 'use strict'
-/*global describe, it*/
 
-var should = require('should')
-var merge2 = require('../index.js')
+var tman = require('tman')
+var assert = require('assert')
 var stream = require('stream')
 var thunk = require('thunks')()
 var through = require('through2')
+var merge2 = require('..')
 
 function fakeReadStream (options) {
   var readStream = new stream.Readable(options)
@@ -13,8 +13,8 @@ function fakeReadStream (options) {
   return readStream
 }
 
-describe('merge2', function () {
-  it('merge2(read1, read2, through3)', function (done) {
+tman.suite('merge2', function () {
+  tman.it('merge2(read1, read2, through3)', function (done) {
     var options = {objectMode: true}
     var result = []
     var read1 = fakeReadStream(options)
@@ -45,12 +45,12 @@ describe('merge2', function () {
       })
       .on('error', done)
       .on('end', function () {
-        should(result).be.eql([1, 2, 3, 4, 5, 6])
+        assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
         done()
       })
   })
 
-  it('merge2(read1, [read2, through3], through4, [through5, read6])', function (done) {
+  tman.it('merge2(read1, [read2, through3], through4, [through5, read6])', function (done) {
     var options = {objectMode: true}
     var result = []
     var read1 = fakeReadStream(options)
@@ -85,12 +85,12 @@ describe('merge2', function () {
       })
       .on('error', done)
       .on('end', function () {
-        should(result).be.eql([1, 3, 2, 4, 5, 6])
+        assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
         done()
       })
   })
 
-  it('merge2().add(read1, [read2, through3], through4, [through5, read6])', function (done) {
+  tman.it('merge2().add(read1, [read2, through3], through4, [through5, read6])', function (done) {
     var options = {objectMode: true}
     var result = []
     var read1 = fakeReadStream(options)
@@ -126,12 +126,12 @@ describe('merge2', function () {
       .add([through5, read6])
       .on('error', done)
       .on('end', function () {
-        should(result).be.eql([1, 3, 2, 4, 5, 6])
+        assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
         done()
       })
   })
 
-  it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
+  tman.it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
     var options = {objectMode: false}
     var result = ''
     var read1 = fakeReadStream(options)
@@ -162,12 +162,12 @@ describe('merge2', function () {
       })
       .on('error', done)
       .on('end', function () {
-        should(result).be.equal('123456')
+        assert.strictEqual(result, '123456')
         done()
       })
   })
 
-  it('merge2(read1, read2, {end: false})', function (done) {
+  tman.it('merge2(read1, read2, {end: false})', function (done) {
     var options = {objectMode: true}
     var result = []
     var read1 = fakeReadStream(options)
@@ -187,7 +187,7 @@ describe('merge2', function () {
     through3.end()
 
     thunk.delay(500)(function () {
-      should(result).be.eql([1, 2, 3, 4])
+      assert.deepEqual(result, [1, 2, 3, 4])
       mergeStream.add(through3)
       return thunk.delay(100)
     })(function () {
@@ -200,12 +200,12 @@ describe('merge2', function () {
       })
       .on('error', done)
       .on('end', function () {
-        should(result).be.eql([1, 2, 3, 4, 5, 6])
+        assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
         done()
       })
   })
 
-  it('merge2(merge2(through4, [through5, read6]), read1, [read2, through3])', function (done) {
+  tman.it('merge2(merge2(through4, [through5, read6]), read1, [read2, through3])', function (done) {
     var options = {objectMode: true}
     var result1 = []
     var result2 = []
@@ -244,12 +244,12 @@ describe('merge2', function () {
     mergeStream
       .on('data', function (chunk) {
         result2.push(chunk)
-        if (result2.length <= 3) should(result1).be.eql(result2)
-        else should(result1).be.eql([4, 5, 6])
+        if (result2.length <= 3) assert.deepEqual(result1, result2)
+        else assert.deepEqual(result1, [4, 5, 6])
       })
       .on('error', done)
       .on('end', function () {
-        should(result2).be.eql([4, 5, 6, 1, 3, 2])
+        assert.deepEqual(result2, [4, 5, 6, 1, 3, 2])
         done()
       })
   })
