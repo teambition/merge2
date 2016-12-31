@@ -13,6 +13,20 @@ function fakeReadStream (options) {
   return readStream
 }
 
+function fakeReadClassicStream () {
+  var Stream = stream
+  var readStream = new Stream()
+  readStream.readable = true
+  readStream.push = function (data) {
+    if (data === null) {
+      this.emit('end')
+      readStream.readable = false
+    }
+    this.emit('data', data)
+  }
+  return readStream
+}
+
 tman.suite('merge2', function () {
   tman.it('merge2(read1, read2, through3)', function (done) {
     var options = {objectMode: true}
@@ -163,6 +177,31 @@ tman.suite('merge2', function () {
       .on('error', done)
       .on('end', function () {
         assert.strictEqual(result, '123456')
+        done()
+      })
+  })
+
+  tman.it('merge2([read1, read2]) with classic style streams', function (done) {
+    var result = []
+    var read1 = fakeReadClassicStream()
+    var read2 = fakeReadClassicStream()
+
+    var mergeStream = merge2([read1, read2])
+
+    read1.push(1)
+    read1.push(null)
+    thunk.delay(100)(function () {
+      read2.push(2)
+      read2.push(null)
+    })
+
+    mergeStream
+      .on('data', function (chunk) {
+        result.push(chunk)
+      })
+      .on('error', done)
+      .on('end', function () {
+        assert.deepEqual(result, [1, 2])
         done()
       })
   })
