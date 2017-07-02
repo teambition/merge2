@@ -6,26 +6,26 @@
  * Copyright (c) 2014-2016 Teambition
  * Licensed under the MIT license.
  */
-var Stream = require('stream')
-var PassThrough = Stream.PassThrough
-var slice = Array.prototype.slice
+const Stream = require('stream')
+const PassThrough = Stream.PassThrough
+const slice = Array.prototype.slice
 
 module.exports = function merge2 () {
-  var streamsQueue = []
-  var merging = false
-  var args = slice.call(arguments)
-  var options = args[args.length - 1]
+  const streamsQueue = []
+  let merging = false
+  let args = slice.call(arguments)
+  let options = args[args.length - 1]
 
   if (options && !Array.isArray(options) && options.pipe == null) args.pop()
   else options = {}
 
-  var doEnd = options.end !== false
+  let doEnd = options.end !== false
   if (options.objectMode == null) options.objectMode = true
   if (options.highWaterMark == null) options.highWaterMark = 64 * 1024
-  var mergedStream = PassThrough(options)
+  const mergedStream = PassThrough(options)
 
   function addStream () {
-    for (var i = 0, len = arguments.length; i < len; i++) {
+    for (let i = 0, len = arguments.length; i < len; i++) {
       streamsQueue.push(pauseStreams(arguments[i], options))
     }
     mergeStream()
@@ -36,11 +36,11 @@ module.exports = function merge2 () {
     if (merging) return
     merging = true
 
-    var streams = streamsQueue.shift()
+    let streams = streamsQueue.shift()
     if (!streams) return endStream()
     if (!Array.isArray(streams)) streams = [streams]
 
-    var pipesCount = streams.length + 1
+    let pipesCount = streams.length + 1
 
     function next () {
       if (--pipesCount > 0) return
@@ -66,7 +66,7 @@ module.exports = function merge2 () {
       stream.resume()
     }
 
-    for (var i = 0; i < streams.length; i++) pipe(streams[i])
+    for (let i = 0; i < streams.length; i++) pipe(streams[i])
 
     next()
   }
@@ -98,7 +98,7 @@ function pauseStreams (streams, options) {
     }
     streams.pause()
   } else {
-    for (var i = 0, len = streams.length; i < len; i++) streams[i] = pauseStreams(streams[i], options)
+    for (let i = 0, len = streams.length; i < len; i++) streams[i] = pauseStreams(streams[i], options)
   }
   return streams
 }
