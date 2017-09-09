@@ -6,11 +6,10 @@
  * Copyright (c) 2014-2016 Teambition
  * Licensed under the MIT license.
  */
-const Stream = require('stream')
+import Stream from 'stream'
+
 const PassThrough = Stream.PassThrough
 const slice = Array.prototype.slice
-
-module.exports = merge2
 
 function merge2 () {
   const streamsQueue = []
@@ -104,3 +103,5 @@ function pauseStreams (streams, options) {
   }
   return streams
 }
+
+export { merge2 as default }

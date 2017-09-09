@@ -4,8 +4,9 @@
   "authors": [
     "Yan Qing <admin@zensh.com>"
   ],
-  "version": "1.1.0",
-  "main": "index.js",
+  "version": "1.2.0",
+  "main": "./index",
+  "jsnext:main": "index.mjs",
   "repository": {
     "type": "git",
     "url": "git@github.com:teambition/merge2.git"
@@ -26,16 +27,18 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "standard": "^10.0.2",
+    "@std/esm": "^0.8.3",
+    "standard": "^10.0.3",
     "through2": "^2.0.3",
-    "thunks": "^4.8.0",
-    "tman": "^1.6.9"
+    "thunks": "^4.8.1",
+    "tman": "^1.7.2"
   },
   "scripts": {
     "test": "standard && tman"
   },
   "files": [
     "README.md",
-    "index.js"
+    "index.js",
+    "index.mjs"
   ]
 }

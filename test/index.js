@@ -5,7 +5,278 @@ const assert = require('assert')
 const Stream = require('stream')
 const thunk = require('thunks')()
 const through = require('through2')
-const merge2 = require('..')
+
+test(require('..'))
+test(require('@std/esm')(module)('../index.mjs').default)
+
+function test (merge2) {
+  tman.suite('merge2', function () {
+    tman.it('merge2(read1, read2, through3)', function (done) {
+      let options = {objectMode: true}
+      let result = []
+      let read1 = fakeReadStream(options)
+      let read2 = fakeReadStream(options)
+      let through3 = through.obj()
+
+      let mergeStream = merge2(read1, read2, through3)
+
+      read1.push(1)
+      thunk.delay(100)(function () {
+        read1.push(2)
+        read1.push(null)
+      })
+      read2.push(3)
+      thunk.delay(10)(function () {
+        read2.push(4)
+        read2.push(null)
+      })
+      through3.push(5)
+      thunk.delay(200)(function () {
+        through3.push(6)
+        through3.end()
+      })
+
+      mergeStream
+        .on('data', function (chunk) {
+          result.push(chunk)
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
+          done()
+        })
+    })
+
+    tman.it('merge2(read1, [read2, through3], through4, [through5, read6])', function (done) {
+      let options = {objectMode: true}
+      let result = []
+      let read1 = fakeReadStream(options)
+      let read2 = fakeReadStream(options)
+      let through3 = through.obj()
+      let through4 = through.obj()
+      let through5 = through.obj()
+      let read6 = fakeReadStream(options)
+
+      read1.push(1)
+      read1.push(null)
+      thunk.delay(100)(function () {
+        read2.push(2)
+        read2.push(null)
+      })
+      through3.push(3)
+      through3.end()
+      through4.push(4)
+      through4.push(null)
+      through5.push(5)
+      through5.push(null)
+      thunk.delay(200)(function () {
+        read6.push(6)
+        read6.push(null)
+      })
+
+      let mergeStream = merge2(read1, [read2, through3], through4, [through5, read6])
+
+      mergeStream
+        .on('data', function (chunk) {
+          result.push(chunk)
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
+          done()
+        })
+    })
+
+    tman.it('merge2().add(read1, [read2, through3], through4, [through5, read6])', function (done) {
+      let options = {objectMode: true}
+      let result = []
+      let read1 = fakeReadStream(options)
+      let read2 = fakeReadStream(options)
+      let through3 = through.obj()
+      let through4 = through.obj()
+      let through5 = through.obj()
+      let read6 = fakeReadStream(options)
+      let mergeStream = merge2()
+
+      read1.push(1)
+      read1.push(null)
+      thunk.delay(100)(function () {
+        read2.push(2)
+        read2.push(null)
+      })
+      through3.push(3)
+      through3.end()
+      through4.push(4)
+      through4.push(null)
+      through5.push(5)
+      through5.push(null)
+      thunk.delay(200)(function () {
+        read6.push(6)
+        read6.push(null)
+      })
+
+      mergeStream
+        .add(read1, [read2, through3], through4)
+        .on('data', function (chunk) {
+          result.push(chunk)
+        })
+        .add([through5, read6])
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
+          done()
+        })
+    })
+
+    tman.it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
+      let options = {objectMode: false}
+      let result = ''
+      let read1 = fakeReadStream(options)
+      let read2 = fakeReadStream(options)
+      let through3 = through(options)
+
+      let mergeStream = merge2(read1, read2, through3, options)
+
+      read1.push('1')
+      thunk.delay(100)(function () {
+        read1.push('2')
+        read1.push(null)
+      })
+      read2.push('3')
+      thunk.delay(10)(function () {
+        read2.push('4')
+        read2.push(null)
+      })
+      through3.push('5')
+      thunk.delay(200)(function () {
+        through3.push('6')
+        through3.end()
+      })
+
+      mergeStream
+        .on('data', function (chunk) {
+          result += chunk.toString()
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.strictEqual(result, '123456')
+          done()
+        })
+    })
+
+    tman.it('merge2([read1, read2]) with classic style streams', function (done) {
+      let result = []
+      let read1 = fakeReadClassicStream()
+      let read2 = fakeReadClassicStream()
+
+      let mergeStream = merge2([read1, read2])
+
+      read1.push(1)
+      read1.push(null)
+      thunk.delay(100)(function () {
+        read2.push(2)
+        read2.push(null)
+      })
+
+      mergeStream
+        .on('data', function (chunk) {
+          result.push(chunk)
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result, [1, 2])
+          done()
+        })
+    })
+
+    tman.it('merge2(read1, read2, {end: false})', function (done) {
+      let options = {objectMode: true}
+      let result = []
+      let read1 = fakeReadStream(options)
+      let read2 = fakeReadStream(options)
+      let through3 = through.obj()
+
+      let mergeStream = merge2(read1, read2, {end: false})
+
+      read1.push(1)
+      read1.push(2)
+      read1.push(null)
+      read2.push(3)
+      read2.push(4)
+      read2.push(null)
+      through3.push(5)
+      through3.push(6)
+      through3.end()
+
+      thunk.delay(500)(function () {
+        assert.deepEqual(result, [1, 2, 3, 4])
+        mergeStream.add(through3)
+        return thunk.delay(100)
+      })(function () {
+        mergeStream.end()
+      })
+
+      mergeStream
+        .on('data', function (chunk) {
+          result.push(chunk)
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
+          done()
+        })
+    })
+
+    tman.it('merge2(merge2(through4, [through5, read6]), read1, [read2, through3])', function (done) {
+      let options = {objectMode: true}
+      let result1 = []
+      let result2 = []
+      let read1 = fakeReadStream(options)
+      let read2 = fakeReadStream(options)
+      let through3 = through.obj()
+      let through4 = through.obj()
+      let through5 = through.obj()
+      let read6 = fakeReadStream(options)
+
+      read1.push(1)
+      read1.push(null)
+      thunk.delay(100)(function () {
+        read2.push(2)
+        read2.push(null)
+      })
+      through3.push(3)
+      through3.end()
+      through4.push(4)
+      through4.push(null)
+      through5.push(5)
+      through5.push(null)
+      thunk.delay(10)(function () {
+        read6.push(6)
+        read6.push(null)
+      })
+
+      let mergeStream1 = merge2(through4, [through5, read6])
+
+      mergeStream1.on('data', function (chunk) {
+        result1.push(chunk)
+      })
+
+      let mergeStream = merge2(mergeStream1, read1, [read2, through3])
+
+      mergeStream
+        .on('data', function (chunk) {
+          result2.push(chunk)
+          if (result2.length <= 3) assert.deepEqual(result1, result2)
+          else assert.deepEqual(result1, [4, 5, 6])
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result2, [4, 5, 6, 1, 3, 2])
+          done()
+        })
+    })
+  })
+}
 
 function fakeReadStream (options) {
   let readStream = new Stream.Readable(options)
@@ -25,270 +296,3 @@ function fakeReadClassicStream () {
   }
   return readStream
 }
-
-tman.suite('merge2', function () {
-  tman.it('merge2(read1, read2, through3)', function (done) {
-    let options = {objectMode: true}
-    let result = []
-    let read1 = fakeReadStream(options)
-    let read2 = fakeReadStream(options)
-    let through3 = through.obj()
-
-    let mergeStream = merge2(read1, read2, through3)
-
-    read1.push(1)
-    thunk.delay(100)(function () {
-      read1.push(2)
-      read1.push(null)
-    })
-    read2.push(3)
-    thunk.delay(10)(function () {
-      read2.push(4)
-      read2.push(null)
-    })
-    through3.push(5)
-    thunk.delay(200)(function () {
-      through3.push(6)
-      through3.end()
-    })
-
-    mergeStream
-      .on('data', function (chunk) {
-        result.push(chunk)
-      })
-      .on('error', done)
-      .on('end', function () {
-        assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
-        done()
-      })
-  })
-
-  tman.it('merge2(read1, [read2, through3], through4, [through5, read6])', function (done) {
-    let options = {objectMode: true}
-    let result = []
-    let read1 = fakeReadStream(options)
-    let read2 = fakeReadStream(options)
-    let through3 = through.obj()
-    let through4 = through.obj()
-    let through5 = through.obj()
-    let read6 = fakeReadStream(options)
-
-    read1.push(1)
-    read1.push(null)
-    thunk.delay(100)(function () {
-      read2.push(2)
-      read2.push(null)
-    })
-    through3.push(3)
-    through3.end()
-    through4.push(4)
-    through4.push(null)
-    through5.push(5)
-    through5.push(null)
-    thunk.delay(200)(function () {
-      read6.push(6)
-      read6.push(null)
-    })
-
-    let mergeStream = merge2(read1, [read2, through3], through4, [through5, read6])
-
-    mergeStream
-      .on('data', function (chunk) {
-        result.push(chunk)
-      })
-      .on('error', done)
-      .on('end', function () {
-        assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
-        done()
-      })
-  })
-
-  tman.it('merge2().add(read1, [read2, through3], through4, [through5, read6])', function (done) {
-    let options = {objectMode: true}
-    let result = []
-    let read1 = fakeReadStream(options)
-    let read2 = fakeReadStream(options)
-    let through3 = through.obj()
-    let through4 = through.obj()
-    let through5 = through.obj()
-    let read6 = fakeReadStream(options)
-    let mergeStream = merge2()
-
-    read1.push(1)
-    read1.push(null)
-    thunk.delay(100)(function () {
-      read2.push(2)
-      read2.push(null)
-    })
-    through3.push(3)
-    through3.end()
-    through4.push(4)
-    through4.push(null)
-    through5.push(5)
-    through5.push(null)
-    thunk.delay(200)(function () {
-      read6.push(6)
-      read6.push(null)
-    })
-
-    mergeStream
-      .add(read1, [read2, through3], through4)
-      .on('data', function (chunk) {
-        result.push(chunk)
-      })
-      .add([through5, read6])
-      .on('error', done)
-      .on('end', function () {
-        assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
-        done()
-      })
-  })
-
-  tman.it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
-    let options = {objectMode: false}
-    let result = ''
-    let read1 = fakeReadStream(options)
-    let read2 = fakeReadStream(options)
-    let through3 = through(options)
-
-    let mergeStream = merge2(read1, read2, through3, options)
-
-    read1.push('1')
-    thunk.delay(100)(function () {
-      read1.push('2')
-      read1.push(null)
-    })
-    read2.push('3')
-    thunk.delay(10)(function () {
-      read2.push('4')
-      read2.push(null)
-    })
-    through3.push('5')
-    thunk.delay(200)(function () {
-      through3.push('6')
-      through3.end()
-    })
-
-    mergeStream
-      .on('data', function (chunk) {
-        result += chunk.toString()
-      })
-      .on('error', done)
-      .on('end', function () {
-        assert.strictEqual(result, '123456')
-        done()
-      })
-  })
-
-  tman.it('merge2([read1, read2]) with classic style streams', function (done) {
-    let result = []
-    let read1 = fakeReadClassicStream()
-    let read2 = fakeReadClassicStream()
-
-    let mergeStream = merge2([read1, read2])
-
-    read1.push(1)
-    read1.push(null)
-    thunk.delay(100)(function () {
-      read2.push(2)
-      read2.push(null)
-    })
-
-    mergeStream
-      .on('data', function (chunk) {
-        result.push(chunk)
-      })
-      .on('error', done)
-      .on('end', function () {
-        assert.deepEqual(result, [1, 2])
-        done()
-      })
-  })
-
-  tman.it('merge2(read1, read2, {end: false})', function (done) {
-    let options = {objectMode: true}
-    let result = []
-    let read1 = fakeReadStream(options)
-    let read2 = fakeReadStream(options)
-    let through3 = through.obj()
-
-    let mergeStream = merge2(read1, read2, {end: false})
-
-    read1.push(1)
-    read1.push(2)
-    read1.push(null)
-    read2.push(3)
-    read2.push(4)
-    read2.push(null)
-    through3.push(5)
-    through3.push(6)
-    through3.end()
-
-    thunk.delay(500)(function () {
-      assert.deepEqual(result, [1, 2, 3, 4])
-      mergeStream.add(through3)
-      return thunk.delay(100)
-    })(function () {
-      mergeStream.end()
-    })
-
-    mergeStream
-      .on('data', function (chunk) {
-        result.push(chunk)
-      })
-      .on('error', done)
-      .on('end', function () {
-        assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
-        done()
-      })
-  })
-
-  tman.it('merge2(merge2(through4, [through5, read6]), read1, [read2, through3])', function (done) {
-    let options = {objectMode: true}
-    let result1 = []
-    let result2 = []
-    let read1 = fakeReadStream(options)
-    let read2 = fakeReadStream(options)
-    let through3 = through.obj()
-    let through4 = through.obj()
-    let through5 = through.obj()
-    let read6 = fakeReadStream(options)
-
-    read1.push(1)
-    read1.push(null)
-    thunk.delay(100)(function () {
-      read2.push(2)
-      read2.push(null)
-    })
-    through3.push(3)
-    through3.end()
-    through4.push(4)
-    through4.push(null)
-    through5.push(5)
-    through5.push(null)
-    thunk.delay(10)(function () {
-      read6.push(6)
-      read6.push(null)
-    })
-
-    let mergeStream1 = merge2(through4, [through5, read6])
-
-    mergeStream1.on('data', function (chunk) {
-      result1.push(chunk)
-    })
-
-    let mergeStream = merge2(mergeStream1, read1, [read2, through3])
-
-    mergeStream
-      .on('data', function (chunk) {
-        result2.push(chunk)
-        if (result2.length <= 3) assert.deepEqual(result1, result2)
-        else assert.deepEqual(result1, [4, 5, 6])
-      })
-      .on('error', done)
-      .on('end', function () {
-        assert.deepEqual(result2, [4, 5, 6, 1, 3, 2])
-        done()
-      })
-  })
-})
