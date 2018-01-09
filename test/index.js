@@ -5,6 +5,7 @@ const assert = require('assert')
 const Stream = require('stream')
 const thunk = require('thunks')()
 const through = require('through2')
+const toThrough = require('to-through')
 
 test(require('..'))
 test(require('@std/esm')(module)('../index.mjs').default)
@@ -43,6 +44,29 @@ function test (merge2) {
         .on('error', done)
         .on('end', function () {
           assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
+          done()
+        })
+    })
+
+    tman.it('merge2(TransformStream)', function (done) {
+      let result = []
+      let ts = through.obj()
+
+      let mergeStream = merge2(toThrough(ts))
+
+      ts.push(1)
+      thunk.delay(100)(function () {
+        ts.push(2)
+        ts.push(null)
+      })
+
+      mergeStream
+        .on('data', function (chunk) {
+          result.push(chunk)
+        })
+        .on('error', done)
+        .on('end', function () {
+          assert.deepEqual(result, [1, 2])
           done()
         })
     })
