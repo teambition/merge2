@@ -4,7 +4,8 @@
   "authors": [
     "Yan Qing <admin@zensh.com>"
   ],
-  "version": "1.2.1",
+  "license": "MIT",
+  "version": "1.2.2",
   "main": "./index",
   "jsnext:main": "index.mjs",
   "repository": {
@@ -27,10 +28,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@std/esm": "^0.19.1",
-    "standard": "^10.0.3",
+    "@std/esm": "^0.26.0",
+    "standard": "^11.0.1",
     "through2": "^2.0.3",
-    "thunks": "^4.9.0",
+    "thunks": "^4.9.2",
     "tman": "^1.7.4",
     "to-through": "^2.0.0"
   },
