@@ -13,13 +13,13 @@ test(require('@std/esm')(module)('../index.mjs').default)
 function test (merge2) {
   tman.suite('merge2', function () {
     tman.it('merge2(read1, read2, through3)', function (done) {
-      let options = {objectMode: true}
-      let result = []
-      let read1 = fakeReadStream(options)
-      let read2 = fakeReadStream(options)
-      let through3 = through.obj()
+      const options = {objectMode: true}
+      const result = []
+      const read1 = fakeReadStream(options)
+      const read2 = fakeReadStream(options)
+      const through3 = through.obj()
 
-      let mergeStream = merge2(read1, read2, through3)
+      const mergeStream = merge2(read1, read2, through3)
 
       read1.push(1)
       thunk.delay(100)(function () {
@@ -49,10 +49,10 @@ function test (merge2) {
     })
 
     tman.it('merge2(TransformStream)', function (done) {
-      let result = []
-      let ts = through.obj()
+      const result = []
+      const ts = through.obj()
 
-      let mergeStream = merge2(toThrough(ts))
+      const mergeStream = merge2(toThrough(ts))
 
       ts.push(1)
       thunk.delay(100)(function () {
@@ -72,14 +72,14 @@ function test (merge2) {
     })
 
     tman.it('merge2(read1, [read2, through3], through4, [through5, read6])', function (done) {
-      let options = {objectMode: true}
-      let result = []
-      let read1 = fakeReadStream(options)
-      let read2 = fakeReadStream(options)
-      let through3 = through.obj()
-      let through4 = through.obj()
-      let through5 = through.obj()
-      let read6 = fakeReadStream(options)
+      const options = {objectMode: true}
+      const result = []
+      const read1 = fakeReadStream(options)
+      const read2 = fakeReadStream(options)
+      const through3 = through.obj()
+      const through4 = through.obj()
+      const through5 = through.obj()
+      const read6 = fakeReadStream(options)
 
       read1.push(1)
       read1.push(null)
@@ -98,7 +98,7 @@ function test (merge2) {
         read6.push(null)
       })
 
-      let mergeStream = merge2(read1, [read2, through3], through4, [through5, read6])
+      const mergeStream = merge2(read1, [read2, through3], through4, [through5, read6])
 
       mergeStream
         .on('data', function (chunk) {
@@ -112,15 +112,15 @@ function test (merge2) {
     })
 
     tman.it('merge2().add(read1, [read2, through3], through4, [through5, read6])', function (done) {
-      let options = {objectMode: true}
-      let result = []
-      let read1 = fakeReadStream(options)
-      let read2 = fakeReadStream(options)
-      let through3 = through.obj()
-      let through4 = through.obj()
-      let through5 = through.obj()
-      let read6 = fakeReadStream(options)
-      let mergeStream = merge2()
+      const options = {objectMode: true}
+      const result = []
+      const read1 = fakeReadStream(options)
+      const read2 = fakeReadStream(options)
+      const through3 = through.obj()
+      const through4 = through.obj()
+      const through5 = through.obj()
+      const read6 = fakeReadStream(options)
+      const mergeStream = merge2()
 
       read1.push(1)
       read1.push(null)
@@ -153,13 +153,13 @@ function test (merge2) {
     })
 
     tman.it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
-      let options = {objectMode: false}
+      const options = {objectMode: false}
       let result = ''
-      let read1 = fakeReadStream(options)
-      let read2 = fakeReadStream(options)
-      let through3 = through(options)
+      const read1 = fakeReadStream(options)
+      const read2 = fakeReadStream(options)
+      const through3 = through(options)
 
-      let mergeStream = merge2(read1, read2, through3, options)
+      const mergeStream = merge2(read1, read2, through3, options)
 
       read1.push('1')
       thunk.delay(100)(function () {
@@ -189,11 +189,11 @@ function test (merge2) {
     })
 
     tman.it('merge2([read1, read2]) with classic style streams', function (done) {
-      let result = []
-      let read1 = fakeReadClassicStream()
-      let read2 = fakeReadClassicStream()
+      const result = []
+      const read1 = fakeReadClassicStream()
+      const read2 = fakeReadClassicStream()
 
-      let mergeStream = merge2([read1, read2])
+      const mergeStream = merge2([read1, read2])
 
       read1.push(1)
       read1.push(null)
@@ -214,13 +214,13 @@ function test (merge2) {
     })
 
     tman.it('merge2(read1, read2, {end: false})', function (done) {
-      let options = {objectMode: true}
-      let result = []
-      let read1 = fakeReadStream(options)
-      let read2 = fakeReadStream(options)
-      let through3 = through.obj()
+      const options = {objectMode: true}
+      const result = []
+      const read1 = fakeReadStream(options)
+      const read2 = fakeReadStream(options)
+      const through3 = through.obj()
 
-      let mergeStream = merge2(read1, read2, {end: false})
+      const mergeStream = merge2(read1, read2, {end: false})
 
       read1.push(1)
       read1.push(2)
@@ -252,15 +252,15 @@ function test (merge2) {
     })
 
     tman.it('merge2(merge2(through4, [through5, read6]), read1, [read2, through3])', function (done) {
-      let options = {objectMode: true}
-      let result1 = []
-      let result2 = []
-      let read1 = fakeReadStream(options)
-      let read2 = fakeReadStream(options)
-      let through3 = through.obj()
-      let through4 = through.obj()
-      let through5 = through.obj()
-      let read6 = fakeReadStream(options)
+      const options = {objectMode: true}
+      const result1 = []
+      const result2 = []
+      const read1 = fakeReadStream(options)
+      const read2 = fakeReadStream(options)
+      const through3 = through.obj()
+      const through4 = through.obj()
+      const through5 = through.obj()
+      const read6 = fakeReadStream(options)
 
       read1.push(1)
       read1.push(null)
@@ -279,13 +279,13 @@ function test (merge2) {
         read6.push(null)
       })
 
-      let mergeStream1 = merge2(through4, [through5, read6])
+      const mergeStream1 = merge2(through4, [through5, read6])
 
       mergeStream1.on('data', function (chunk) {
         result1.push(chunk)
       })
 
-      let mergeStream = merge2(mergeStream1, read1, [read2, through3])
+      const mergeStream = merge2(mergeStream1, read1, [read2, through3])
 
       mergeStream
         .on('data', function (chunk) {
@@ -303,13 +303,13 @@ function test (merge2) {
 }
 
 function fakeReadStream (options) {
-  let readStream = new Stream.Readable(options)
+  const readStream = new Stream.Readable(options)
   readStream._read = function () {}
   return readStream
 }
 
 function fakeReadClassicStream () {
-  let readStream = new Stream()
+  const readStream = new Stream()
   readStream.readable = true
   readStream.push = function (data) {
     if (data === null) {
