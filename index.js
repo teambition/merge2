@@ -15,13 +15,13 @@ module.exports = merge2
 function merge2 () {
   const streamsQueue = []
   let merging = false
-  let args = slice.call(arguments)
+  const args = slice.call(arguments)
   let options = args[args.length - 1]
 
   if (options && !Array.isArray(options) && options.pipe == null) args.pop()
   else options = {}
 
-  let doEnd = options.end !== false
+  const doEnd = options.end !== false
   if (options.objectMode == null) options.objectMode = true
   if (options.highWaterMark == null) options.highWaterMark = 64 * 1024
   const mergedStream = PassThrough(options)
