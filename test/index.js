@@ -13,7 +13,7 @@ test(require('@std/esm')(module)('../index.mjs').default)
 function test (merge2) {
   tman.suite('merge2', function () {
     tman.it('merge2(read1, read2, through3)', function (done) {
-      const options = {objectMode: true}
+      const options = { objectMode: true }
       const result = []
       const read1 = fakeReadStream(options)
       const read2 = fakeReadStream(options)
@@ -43,7 +43,7 @@ function test (merge2) {
         })
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
+          assert.deepStrictEqual(result, [1, 2, 3, 4, 5, 6])
           done()
         })
     })
@@ -66,13 +66,13 @@ function test (merge2) {
         })
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result, [1, 2])
+          assert.deepStrictEqual(result, [1, 2])
           done()
         })
     })
 
     tman.it('merge2(read1, [read2, through3], through4, [through5, read6])', function (done) {
-      const options = {objectMode: true}
+      const options = { objectMode: true }
       const result = []
       const read1 = fakeReadStream(options)
       const read2 = fakeReadStream(options)
@@ -106,13 +106,13 @@ function test (merge2) {
         })
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
+          assert.deepStrictEqual(result, [1, 3, 2, 4, 5, 6])
           done()
         })
     })
 
     tman.it('merge2().add(read1, [read2, through3], through4, [through5, read6])', function (done) {
-      const options = {objectMode: true}
+      const options = { objectMode: true }
       const result = []
       const read1 = fakeReadStream(options)
       const read2 = fakeReadStream(options)
@@ -147,13 +147,13 @@ function test (merge2) {
         .add([through5, read6])
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result, [1, 3, 2, 4, 5, 6])
+          assert.deepStrictEqual(result, [1, 3, 2, 4, 5, 6])
           done()
         })
     })
 
     tman.it('merge2(read1, read2, through3, {objectMode: false})', function (done) {
-      const options = {objectMode: false}
+      const options = { objectMode: false }
       let result = ''
       const read1 = fakeReadStream(options)
       const read2 = fakeReadStream(options)
@@ -208,19 +208,19 @@ function test (merge2) {
         })
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result, [1, 2])
+          assert.deepStrictEqual(result, [1, 2])
           done()
         })
     })
 
     tman.it('merge2(read1, read2, {end: false})', function (done) {
-      const options = {objectMode: true}
+      const options = { objectMode: true }
       const result = []
       const read1 = fakeReadStream(options)
       const read2 = fakeReadStream(options)
       const through3 = through.obj()
 
-      const mergeStream = merge2(read1, read2, {end: false})
+      const mergeStream = merge2(read1, read2, { end: false })
 
       read1.push(1)
       read1.push(2)
@@ -233,7 +233,7 @@ function test (merge2) {
       through3.end()
 
       thunk.delay(500)(function () {
-        assert.deepEqual(result, [1, 2, 3, 4])
+        assert.deepStrictEqual(result, [1, 2, 3, 4])
         mergeStream.add(through3)
         return thunk.delay(100)
       })(function () {
@@ -246,13 +246,13 @@ function test (merge2) {
         })
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result, [1, 2, 3, 4, 5, 6])
+          assert.deepStrictEqual(result, [1, 2, 3, 4, 5, 6])
           done()
         })
     })
 
     tman.it('merge2(merge2(through4, [through5, read6]), read1, [read2, through3])', function (done) {
-      const options = {objectMode: true}
+      const options = { objectMode: true }
       const result1 = []
       const result2 = []
       const read1 = fakeReadStream(options)
@@ -290,12 +290,12 @@ function test (merge2) {
       mergeStream
         .on('data', function (chunk) {
           result2.push(chunk)
-          if (result2.length <= 3) assert.deepEqual(result1, result2)
-          else assert.deepEqual(result1, [4, 5, 6])
+          if (result2.length <= 3) assert.deepStrictEqual(result1, result2)
+          else assert.deepStrictEqual(result1, [4, 5, 6])
         })
         .on('error', done)
         .on('end', function () {
-          assert.deepEqual(result2, [4, 5, 6, 1, 3, 2])
+          assert.deepStrictEqual(result2, [4, 5, 6, 1, 3, 2])
           done()
         })
     })
