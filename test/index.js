@@ -3,12 +3,11 @@
 const tman = require('tman')
 const assert = require('assert')
 const Stream = require('stream')
-const thunk = require('thunks')()
+const thunk = require('thunks').thunk
 const through = require('through2')
 const toThrough = require('to-through')
 
 test(require('..'))
-test(require('@std/esm')(module)('../index.mjs').default)
 
 function test (merge2) {
   tman.suite('merge2', function () {
