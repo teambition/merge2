@@ -6,7 +6,7 @@
   ],
   "license": "MIT",
   "version": "1.2.4",
-  "main": "./index",
+  "main": "./index.js",
   "jsnext:main": "index.mjs",
   "repository": {
     "type": "git",
