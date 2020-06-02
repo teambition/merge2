@@ -64,6 +64,9 @@ function merge2 () {
 
       stream.on('merge2UnpipeEnd', onend)
       stream.on('end', onend)
+      stream.on('error', function (err) {
+        mergedStream.emit('error', err)
+      })
       stream.pipe(mergedStream, { end: false })
       // compatible for old stream
       stream.resume()
