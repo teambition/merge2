@@ -47,6 +47,26 @@ function test (merge2) {
         })
     })
 
+    tman.it('merge2 - error handling', function (done) {
+      const ts = through.obj()
+
+      const mergeStream = merge2(toThrough(ts), { pipeError: true })
+
+      const expectedError = new Error('error')
+      thunk.delay(100)(function () {
+        ts.destroy(expectedError)
+      })
+
+      mergeStream
+        .on('error', function (error) {
+          assert.strictEqual(error, expectedError)
+          done()
+        })
+        .on('end', function () {
+          throw Error('error expected')
+        })
+    })
+
     tman.it('merge2(TransformStream)', function (done) {
       const result = []
       const ts = through.obj()
