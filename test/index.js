@@ -50,7 +50,7 @@ function test (merge2) {
     tman.it('merge2 - error handling', function (done) {
       const ts = through.obj()
 
-      const mergeStream = merge2(toThrough(ts))
+      const mergeStream = merge2(toThrough(ts), { pipeError: true })
 
       const expectedError = new Error('error')
       thunk.delay(100)(function () {

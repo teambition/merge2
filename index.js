@@ -22,6 +22,7 @@ function merge2 () {
   else options = {}
 
   const doEnd = options.end !== false
+  const doPipeError = options.pipeError === true
   if (options.objectMode == null) options.objectMode = true
   if (options.highWaterMark == null) options.highWaterMark = 64 * 1024
   const mergedStream = PassThrough(options)
@@ -64,9 +65,13 @@ function merge2 () {
 
       stream.on('merge2UnpipeEnd', onend)
       stream.on('end', onend)
-      stream.on('error', function (err) {
-        mergedStream.emit('error', err)
-      })
+
+      if (doPipeError) {
+        stream.on('error', function (err) {
+          mergedStream.emit('error', err)
+        })
+      }
+
       stream.pipe(mergedStream, { end: false })
       // compatible for old stream
       stream.resume()
