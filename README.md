@@ -30,8 +30,8 @@ gulp.task('app-js', function () {
         .pipe(ngtemplate({
           module: 'genTemplates',
           standalone: true
-        })
-      ), gulp.src([
+        })),
+      gulp.src([
         'static/src/js/app.js',
         'static/src/js/locale_zh-cn.js',
         'static/src/js/router.js',
