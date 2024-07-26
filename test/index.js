@@ -1,8 +1,8 @@
 'use strict'
 
 const tman = require('tman')
-const assert = require('assert')
-const Stream = require('stream')
+const assert = require('node:assert')
+const Stream = require('node:stream')
 const thunk = require('thunks').thunk
 const through = require('through2')
 const toThrough = require('to-through')

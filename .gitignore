@@ -27,3 +27,6 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 .esm-cache
+
+# Ignore lock file, because this is a library
+/package-lock.json

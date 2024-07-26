@@ -6,7 +6,7 @@
  * Copyright (c) 2014-2022 Teambition
  * Licensed under the MIT license.
  */
-const Stream = require('stream')
+const Stream = require('node:stream')
 const PassThrough = Stream.PassThrough
 const slice = Array.prototype.slice
 
