@@ -27,7 +27,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "standard": "^14.3.4",
+    "standard": "^17.1.2",
     "through2": "^3.0.1",
     "thunks": "^4.9.6",
     "tman": "^1.10.0",
