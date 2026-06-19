@@ -9,7 +9,7 @@
   "main": "./index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:teambition/merge2.git"
+    "url": "git+https://github.com/teambition/merge2.git"
   },
   "homepage": "https://github.com/teambition/merge2",
   "keywords": [
